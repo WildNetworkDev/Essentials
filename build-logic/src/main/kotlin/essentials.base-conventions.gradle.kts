@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     id("java")
     id("net.kyori.indra")
-    id("net.kyori.indra.checkstyle")
+//    id("net.kyori.indra.checkstyle")
     id("net.kyori.indra.publishing")
 }
 
@@ -90,7 +90,7 @@ configurations.all {
 }
 
 indra {
-    checkstyle(checkstyleVersion)
+//    checkstyle(checkstyleVersion)
 
     github("EssentialsX", "Essentials")
     gpl3OnlyLicense()

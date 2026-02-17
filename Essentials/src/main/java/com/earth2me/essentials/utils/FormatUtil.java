@@ -70,9 +70,12 @@ public final class FormatUtil {
     }
 
     //This is the general permission sensitive message format function, checks for urls.
-    public static String formatMessage(final IUser user, final String permBase, final String input) {
+    public static String formatMessage(final IUser user, final String permBase, String input) {
         if (input == null) {
             return null;
+        }
+        if (!user.isAuthorized(permBase + ".mini")) {
+            input = stripMiniFormat(input);
         }
         String message = formatString(user, permBase, input);
         if (!user.isAuthorized(permBase + ".url")) {
