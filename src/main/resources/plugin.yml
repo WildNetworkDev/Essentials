@@ -284,10 +284,10 @@ commands:
   #  description: Mutes or unmutes a player.
   #  usage: /<command> <player> [datediff] [reason]
   #  aliases: [emute,silence,esilence]
-  #near:
-  #  description: Lists the players near by or around a player.
-  #  usage: /<command> [playername] [radius]
-  #  aliases: [enear,nearby,enearby]
+  near:
+    description: Lists the players near by or around a player.
+    usage: /<command> [playername] [radius]
+    aliases: [enear,nearby,enearby]
   #nick:
   #  description: Change your nickname or that of another player.
   #  usage: /<command> [player] <nickname|off>
