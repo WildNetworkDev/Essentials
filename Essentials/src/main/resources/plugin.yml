@@ -77,10 +77,10 @@ commands:
     description: Toggles whether you are prompted to confirm inventory clears.
     usage: /<command>
     aliases: [eclearinventoryconfirmtoggle, clearinventoryconfirmoff, eclearinventoryconfirmoff, clearconfirmoff, eclearconfirmoff, clearconfirmon, eclearconfirmon, clearconfirm, eclearconfirm]
-  #condense:
-  #  description: Condenses items into a more compact blocks.
-  #  usage: /<command> [<itemname>|<id>|hand|inventory]
-  #  aliases: [econdense,compact,ecompact,blocks,eblocks,toblocks,etoblocks]
+  condense:
+    description: Condenses items into a more compact blocks.
+    usage: /<command> [<itemname>|<id>|hand|inventory]
+    aliases: [econdense,compact,ecompact,blocks,eblocks,toblocks,etoblocks]
   #compass:
   #  description: Describes your current bearing.
   #  usage: /<command>
@@ -548,6 +548,10 @@ commands:
   #  description: Calculates the worth of items in hand or as specified.
   #  usage: /<command> <<itemname>|<id>|hand|inventory|blocks> [-][amount]
   #  aliases: [eprice,price,eworth]
+  anvil:
+    description: Opens up an Anvil.
+    usage: /<command>
+    aliases: [ eanvil ]
 
 permissions:
   essentials.*:
