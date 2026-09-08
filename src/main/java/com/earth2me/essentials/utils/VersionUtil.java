@@ -41,8 +41,10 @@ public final class VersionUtil {
     public static final BukkitVersion v1_20_4_R01 = BukkitVersion.fromString("1.20.4-R0.1-SNAPSHOT");
     public static final BukkitVersion v1_20_6_R01 = BukkitVersion.fromString("1.20.6-R0.1-SNAPSHOT");
     public static final BukkitVersion v1_21_R01 = BukkitVersion.fromString("1.21-R0.1-SNAPSHOT");
+    public static final BukkitVersion v26_1_R01 = BukkitVersion.fromString("26.1.2-R0.1-SNAPSHOT");
+    public static final BukkitVersion v26_2_R01 = BukkitVersion.fromString("26.2-R0.1-SNAPSHOT");
 
-    private static final Set<BukkitVersion> supportedVersions = ImmutableSet.of(v1_8_8_R01, v1_9_4_R01, v1_10_2_R01, v1_11_2_R01, v1_12_2_R01, v1_13_2_R01, v1_14_4_R01, v1_15_2_R01, v1_16_5_R01, v1_17_1_R01, v1_18_2_R01, v1_19_4_R01, v1_20_6_R01, v1_21_R01);
+    private static final Set<BukkitVersion> supportedVersions = ImmutableSet.of(v1_8_8_R01, v1_9_4_R01, v1_10_2_R01, v1_11_2_R01, v1_12_2_R01, v1_13_2_R01, v1_14_4_R01, v1_15_2_R01, v1_16_5_R01, v1_17_1_R01, v1_18_2_R01, v1_19_4_R01, v1_20_6_R01, v1_21_R01, v26_1_R01, v26_2_R01);
 
     public static final boolean PRE_FLATTENING = VersionUtil.getServerBukkitVersion().isLowerThan(VersionUtil.v1_13_0_R01);
 
@@ -156,7 +158,7 @@ public final class VersionUtil {
                 }
             }
 
-            if (!supportedVersions.contains(getServerBukkitVersion())) {
+            if (!isSupportedVersion(getServerBukkitVersion())) {
                 return supportStatus = SupportStatus.OUTDATED;
             }
 
@@ -173,8 +175,27 @@ public final class VersionUtil {
         return getServerSupportStatus().isSupported();
     }
 
+    /**
+     * Checks if a version is considered supported, either by exact match in the
+     * supported versions set, or by matching the base version (major.minor.patch)
+     * of a supported version. This handles Paper 26.x versions which report strings
+     * like {@code 26.2.build.1-stable} instead of the legacy {@code 1.21-R0.1-SNAPSHOT} form.
+     */
+    private static boolean isSupportedVersion(final BukkitVersion version) {
+        if (supportedVersions.contains(version)) {
+            return true;
+        }
+        for (final BukkitVersion supported : supportedVersions) {
+            if (version.equalsBaseVersion(supported)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static final class BukkitVersion implements Comparable<BukkitVersion> {
         private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)\\.?([0-9]*)?(?:-pre(\\d))?(?:-rc(\\d+))?(?:-?R?([\\d.]+))?(?:-SNAPSHOT)?");
+        private static final Pattern PAPER_BUILD_PATTERN = Pattern.compile("^(\\d+\\.\\d+(?:\\.\\d+)?)\\.build\\.\\d+(?:-[a-z]+)?.*$");
 
         private final int major;
         private final int minor;
@@ -194,7 +215,14 @@ public final class VersionUtil {
 
         public static BukkitVersion fromString(final String string) {
             Preconditions.checkNotNull(string, "string cannot be null.");
-            Matcher matcher = VERSION_PATTERN.matcher(string);
+
+            String versionString = string;
+            final Matcher paperMatcher = PAPER_BUILD_PATTERN.matcher(versionString);
+            if (paperMatcher.matches()) {
+                versionString = paperMatcher.group(1);
+            }
+
+            Matcher matcher = VERSION_PATTERN.matcher(versionString);
             if (!matcher.matches()) {
                 if (!Bukkit.getName().equals("Essentials Fake Server")) {
                     throw new IllegalArgumentException(string + " is not in valid version format. e.g. 1.8.8-R0.1");
@@ -257,6 +285,12 @@ public final class VersionUtil {
 
         public int getReleaseCandidate() {
             return releaseCandidate;
+        }
+
+        public boolean equalsBaseVersion(final BukkitVersion other) {
+            return this.major == other.major &&
+                this.minor == other.minor &&
+                this.patch == other.patch;
         }
 
         @Override
